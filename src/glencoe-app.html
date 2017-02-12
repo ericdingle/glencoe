@@ -1,8 +1,13 @@
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="/bower_components/polymer/polymer.html">
-<link rel="import" href="/src/court-view.html">
+<link rel="import" href="/src/court-page.html">
+<link rel="import" href="/src/settings-page.html">
 <dom-module id="glencoe-app">
   <template>
-    <court-view></court-view>
+    <iron-pages selected="0">
+      <settings-page></settings-page>
+      <court-page></court-page>
+    </iron-pages>
   </template>
   <script>
   Polymer({
