@@ -9,6 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "paper-slider": "PolymerElements/paper-slider#^1.0.13",
-    "iron-pages": "PolymerElements/iron-pages#^1.0.8"
+    "iron-pages": "PolymerElements/iron-pages#^1.0.8",
+    "paper-material": "PolymerElements/paper-material#^1.0.6"
   }
 }
