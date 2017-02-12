@@ -1,3 +1,5 @@
+<link rel="import" href="/bower_components/iron-icons/av-icons.html">
+<link rel="import" href="/bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="/bower_components/paper-material/paper-material.html">
 <link rel="import" href="/bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="/bower_components/polymer/polymer.html">
@@ -12,6 +14,9 @@
     paper-slider {
       width: 100%;
     }
+    paper-fab {
+      --paper-fab-background: #000;
+    }
     </style>
     <paper-material>
       <div>Speed</div>
@@ -22,6 +27,7 @@
       <paper-slider min="20" max="180" step="10" editable></paper-slider>
       <div>Repetitions</div>
       <paper-slider min="1" max="20" editable></paper-slider>
+      <paper-fab icon="av:play-arrow" mini></paper-fab>
     </paper-material>
   </template>
   <script>
