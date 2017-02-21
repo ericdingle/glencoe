@@ -4,14 +4,25 @@
 <link rel="import" href="/src/settings-page.html">
 <dom-module id="glencoe-app">
   <template>
-    <iron-pages selected="0">
-      <settings-page></settings-page>
-      <court-page></court-page>
+    <iron-pages selected="[[selected]]" attr-for-selected="id">
+      <settings-page id="settings" on-start="start"></settings-page>
+      <court-page id="court"></court-page>
     </iron-pages>
   </template>
   <script>
   Polymer({
     is: 'glencoe-app',
+    properties: {
+      selected: {
+        type: String,
+        value: 'settings'
+      },
+    },
+
+    start: function() {
+      this.selected = 'court';
+      this.$.court.start();
+    }
   });
   </script>
 </dom-module>

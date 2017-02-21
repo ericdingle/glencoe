@@ -27,12 +27,15 @@
       <paper-slider min="20" max="180" step="10" editable></paper-slider>
       <div>Repetitions</div>
       <paper-slider min="1" max="20" editable></paper-slider>
-      <paper-fab icon="av:play-arrow" mini></paper-fab>
+      <paper-fab icon="av:play-arrow" mini on-tap="handleTap"></paper-fab>
     </paper-material>
   </template>
   <script>
   Polymer({
     is: 'settings-page',
+    handleTap: function() {
+      this.fire('start');
+    }
   });
   </script>
 </dom-module>
