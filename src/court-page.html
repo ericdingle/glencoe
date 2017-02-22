@@ -1,7 +1,19 @@
+<link rel="import" href="/bower_components/iron-icons/av-icons.html">
+<link rel="import" href="/bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <dom-module id="court-page">
   <template>
     <style>
+    div {
+      display: flex;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    paper-fab {
+      --paper-fab-background: #000;
+    }
     img {
       display: block;
       object-fit: contain;
@@ -9,6 +21,10 @@
       width: 100vw;
     }
     </style>
+    <div>
+      <paper-fab icon="av:pause" mini></paper-fab>
+      <paper-fab icon="av:stop" mini></paper-fab>
+    </div>
     <img src="/images/court.svg">
   </template>
   <script>
