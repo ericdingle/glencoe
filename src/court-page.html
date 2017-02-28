@@ -18,15 +18,19 @@
     }
     </style>
     <div>
-      <paper-fab icon="av:pause" mini></paper-fab>
-      <paper-fab icon="av:stop" mini></paper-fab>
+      <paper-fab icon="av:pause" mini on-tap="show"></paper-fab>
+      <paper-fab icon="av:stop" mini on-tap="hide"></paper-fab>
     </div>
-    <court-ui></court-ui>
+    <court-ui id="courtUi"></court-ui>
   </template>
   <script>
   Polymer({
     is: 'court-page',
-    start: function() {
+    show: function() {
+      this.$.courtUi.show();
+    },
+    hide: function() {
+      this.$.courtUi.hide();
     }
   });
   </script>
