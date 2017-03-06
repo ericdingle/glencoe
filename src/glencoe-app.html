@@ -5,8 +5,8 @@
 <dom-module id="glencoe-app">
   <template>
     <iron-pages selected="[[selected]]" attr-for-selected="id">
-      <settings-page id="settings" on-start="start"></settings-page>
-      <court-page id="court"></court-page>
+      <settings-page id="settings" on-play="play"></settings-page>
+      <court-page id="court" on-stop="stop"></court-page>
     </iron-pages>
   </template>
   <script>
@@ -18,9 +18,12 @@
         value: 'settings'
       },
     },
-
-    start: function() {
+    play: function() {
       this.selected = 'court';
+      this.$.court.play();
+    },
+    stop: function() {
+      this.selected = 'settings';
     }
   });
   </script>
