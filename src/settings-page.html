@@ -1,5 +1,5 @@
 <link rel="import" href="/bower_components/iron-icons/av-icons.html">
-<link rel="import" href="/bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/paper-material/paper-material.html">
 <link rel="import" href="/bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="/bower_components/polymer/polymer.html">
@@ -14,8 +14,10 @@
     paper-slider {
       width: 100%;
     }
-    paper-fab {
-      --paper-fab-background: #000;
+    paper-icon-button {
+      background-color: #000;
+      border-radius: 50%;
+      color: #FFF;
     }
     </style>
     <paper-material>
@@ -27,7 +29,7 @@
       <paper-slider min="20" max="180" step="10" editable></paper-slider>
       <div>Repetitions</div>
       <paper-slider min="1" max="20" editable></paper-slider>
-      <paper-fab icon="av:play-arrow" mini on-tap="handleTap"></paper-fab>
+      <paper-icon-button icon="av:play-arrow" on-tap="handleTap"></paper-icon-button>
     </paper-material>
   </template>
   <script>

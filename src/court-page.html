@@ -1,5 +1,5 @@
 <link rel="import" href="/bower_components/iron-icons/av-icons.html">
-<link rel="import" href="/bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <link rel="import" href="/src/court-ui.html">
 <dom-module id="court-page">
@@ -7,19 +7,29 @@
     <style>
     #display {
       display: flex;
+      flex-direction: column;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
     }
-    paper-fab {
-      --paper-fab-background: #000;
+    #time {
+      font-size: 30px;
+      margin: auto;
+    }
+    paper-icon-button {
+      background-color: #000;
+      border-radius: 50%;
+      color: #FFF;
       margin: 1px;
     }
     </style>
     <div id="display">
-      <paper-fab icon="av:pause" mini on-tap="show"></paper-fab>
-      <paper-fab icon="av:stop" mini on-tap="hide"></paper-fab>
+      <div id="time">00:00</div>
+      <div>
+        <paper-icon-button icon="av:pause" mini on-tap="show"></paper-icon-button>
+        <paper-icon-button icon="av:stop" mini on-tap="hide"></paper-icon-button>
+      </div>
     </div>
     <court-ui id="courtUi"></court-ui>
   </template>
