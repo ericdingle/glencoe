@@ -5,7 +5,7 @@
 <dom-module id="court-page">
   <template>
     <style>
-    div {
+    #display {
       display: flex;
       position: absolute;
       top: 50%;
@@ -17,7 +17,7 @@
       margin: 1px;
     }
     </style>
-    <div>
+    <div id="display">
       <paper-fab icon="av:pause" mini on-tap="show"></paper-fab>
       <paper-fab icon="av:stop" mini on-tap="hide"></paper-fab>
     </div>
@@ -27,7 +27,8 @@
   Polymer({
     is: 'court-page',
     show: function() {
-      this.$.courtUi.show();
+      var i = Math.floor(Math.random() * 6);
+      this.$.courtUi.show(i);
     },
     hide: function() {
       this.$.courtUi.hide();

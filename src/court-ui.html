@@ -46,22 +46,24 @@
       <line x1="480" y1="545" x2="480" y2="705" class="line"/>
       <line x1="320" y1="545" x2="320" y2="975" class="line"/>
 
-      <path id="frontLeft" d="M300 400 Q 250 175 125 125" class="arrow"/>
-      <path id="frontRight" d="M340 400 Q 390 175 515 125" class="arrow"/>
-      <line id="midLeft" x1="300" y1="575" x2="100" y2="575" class="arrow"/>
-      <line id="midLeft" x1="340" y1="575" x2="540" y2="575" class="arrow"/>
-      <path id="backLeft" d="M300 600 Q 250 800 125 850" class="arrow"/>
-      <path id="backRight" d="M340 600 Q 390 800 515 850" class="arrow"/>
+      <path id="arrow0" d="M300 400 Q 250 175 125 125" class="arrow"/>
+      <path id="arrow1" d="M340 400 Q 390 175 515 125" class="arrow"/>
+      <line id="arrow2" x1="300" y1="575" x2="100" y2="575" class="arrow"/>
+      <line id="arrow3" x1="340" y1="575" x2="540" y2="575" class="arrow"/>
+      <path id="arrow4" d="M300 600 Q 250 800 125 850" class="arrow"/>
+      <path id="arrow5" d="M340 600 Q 390 800 515 850" class="arrow"/>
     </svg>
   </template>
   <script>
     Polymer({
       is: 'court-ui',
-      show: function() {
-        this.$.frontLeft.style.visibility = 'visible';
+      show: function(i) {
+        this.$$('#arrow' + i).style.visibility = 'visible';
       },
       hide: function() {
-        this.$.frontLeft.style.visibility = 'hidden';
+        for (var i = 0; i < 6; ++i) {
+          this.$$('#arrow' + i).style.visibility = 'hidden';
+        }
       }
     });  
   </script>
