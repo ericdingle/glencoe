@@ -5,8 +5,14 @@
 <dom-module id="glencoe-app">
   <template>
     <iron-pages selected="[[selected]]" attr-for-selected="id">
-      <settings-page id="settings" on-play="play"></settings-page>
-      <court-page id="court" on-stop="stop"></court-page>
+      <settings-page id="settings" on-play="handlePlay"
+          difficulty="{{difficulty}}" interval-length="{{intervalLength}}"
+          rest-length="{{restLength}}" repetitions="{{repetitions}}">
+      </settings-page>
+      <court-page id="court" on-stop="handleStop"
+          difficulty="[[difficulty]]" interval-length="[[intervalLength]]"
+          rest-length="[[restLength]]" repetitions="[[repetitions]]">
+      </court-page>
     </iron-pages>
   </template>
   <script>
@@ -18,11 +24,11 @@
         value: 'settings'
       },
     },
-    play: function() {
+    handlePlay: function() {
       this.selected = 'court';
       this.$.court.play();
     },
-    stop: function() {
+    handleStop: function() {
       this.selected = 'settings';
     }
   });

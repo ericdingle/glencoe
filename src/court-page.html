@@ -1,6 +1,7 @@
 <link rel="import" href="/bower_components/iron-icons/av-icons.html">
 <link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/src/court-app.html">
 <link rel="import" href="/src/court-ui.html">
 <dom-module id="court-page">
   <template>
@@ -24,26 +25,31 @@
       margin: 1px;
     }
     </style>
+    <court-app id="courtApp"
+        difficulty="[[difficulty]]" interval-length="[[intervalLength]]"
+        rest-length="[[restLength]]" repetitions="[[repetitions]]"
+        time="{{time}}" direction="{{direction}}">
+    </court-app>
     <div id="display">
-      <div id="time">00:00</div>
+      <div id="time">[[time]]</div>
       <div>
         <paper-icon-button icon="av:pause" mini on-tap="pause"></paper-icon-button>
         <paper-icon-button icon="av:stop" mini on-tap="stop"></paper-icon-button>
       </div>
     </div>
-    <court-ui id="courtUi"></court-ui>
+    <court-ui direction="[[direction]]"></court-ui>
   </template>
   <script>
   Polymer({
     is: 'court-page',
     play: function() {
-      var i = Math.floor(Math.random() * 6);
-      this.$.courtUi.show(i);
+      this.$.courtApp.play();
     },
     pause: function() {
-      this.$.courtUi.hide();
+      this.$.courtApp.pause();
     },
     stop: function() {
+      this.$.courtApp.stop();
       this.fire('stop');
     }
   });
