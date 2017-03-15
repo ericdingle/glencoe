@@ -57,13 +57,19 @@
   <script>
     Polymer({
       is: 'court-ui',
-      show: function(i) {
-        this.$$('#arrow' + i).style.visibility = 'visible';
-      },
-      hide: function() {
-        for (var i = 0; i < 6; ++i) {
-          this.$$('#arrow' + i).style.visibility = 'hidden';
+      properties: {
+        index: {
+          type: Number,
+          observer: '_handleIndexChange'
         }
+      },
+      _handleIndexChange: function(newValue, oldValue) {
+        this._setVisibility(newValue, 'visible');
+        this._setVisibility(oldValue, 'hidden');
+      },
+      _setVisibility: function(i, value) {
+        if (i != undefined && i != -1)
+          this.$$('#arrow' + i).style.visibility = value;
       }
     });  
   </script>

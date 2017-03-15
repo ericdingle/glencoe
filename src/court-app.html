@@ -7,13 +7,95 @@
       difficulty: Number,
       intervalLength: Number,
       restLength: Number,
-      repetitions: Number
+      repetitions: Number,
+      time: {
+        type: Number,
+        value: 0,
+        notify: true,
+      },
+      index: {
+        type: Number,
+        value: -1,
+        notify: true
+      },
+      active: {
+        type: Boolean,
+        value: false,
+        notify: true,
+      }
     },
+
     play: function() {
+      this._actions = [];
+
+      for (var i = 0; i < this.repetitions; ++i) {
+        // Rest.
+        this._actions.push(this._getTimeResetAction());
+        this._actions.push(this._getActiveAction(false));
+        this._actions = this._actions.concat(
+            this._getTimeActions(i == 0 ? 10 : this.restLength));
+
+        // Active.
+        this._actions.push(this._getTimeResetAction());
+        this._actions.push(this._getActiveAction(true));
+        var actions = this._getTimeActions(this.intervalLength).concat(
+            this._getIndexActions(this.intervalLength));
+        actions.sort(function(a, b) { return a.time - b.time; });
+        this._actions = this._actions.concat(actions);
+      }
+
+      this._time = 0;
+      this._step();
     },
     pause: function() {
+      if (this._asyncHandle) {
+        this.cancelAsync(this._asyncHandle);
+        this._asyncHandle = undefined;
+      } else {
+        this._step();
+      }
     },
     stop: function() {
+    },
+
+    _getTimeResetAction: function() {
+      return {key: '_time', value: 0, time: 0};
+    },
+    _getActiveAction: function(value) {
+      return {key: 'active', value: value, time: 0};
+    },
+    _getTimeActions: function(duration) {
+      var actions = [];
+      for (var i = 0; i <= duration; ++i) {
+        actions.push({key: 'time', value: duration - i, time: i})
+      }
+      // Delay action to show 0 for one extra second.
+      actions.push({time: duration + 1});
+      return actions;
+    },
+    _getIndexActions: function(duration) {
+      var actions = [];
+      var time = 0;
+      while (time <= duration) {
+        actions.push({key: 'index', value: Math.round(Math.random() * 6), time: time});
+        time += 1.8;
+        actions.push({key: 'index', value: -1, time: time});
+        time += 1.8;
+      }
+      return actions;
+    },
+
+    _step: function() {
+      var action = this._actions[0];
+      if (!action)
+        return;
+
+      this._asyncHandle = this.async(function() {
+        this[action.key] = action.value;
+        this._actions.shift();
+        this._time = action.time;
+        this._step();
+      }, (action.time - this._time) * 1000);
     }
   });  
   </script>
