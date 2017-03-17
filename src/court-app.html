@@ -26,77 +26,70 @@
     },
 
     play: function() {
-      this._actions = [];
-
-      for (var i = 0; i < this.repetitions; ++i) {
-        // Rest.
-        this._actions.push(this._getTimeResetAction());
-        this._actions.push(this._getActiveAction(false));
-        this._actions = this._actions.concat(
-            this._getTimeActions(i == 0 ? 10 : this.restLength));
-
-        // Active.
-        this._actions.push(this._getTimeResetAction());
-        this._actions.push(this._getActiveAction(true));
-        var actions = this._getTimeActions(this.intervalLength).concat(
-            this._getIndexActions(this.intervalLength));
-        actions.sort(function(a, b) { return a.time - b.time; });
-        this._actions = this._actions.concat(actions);
-      }
-
-      this._time = 0;
-      this._step();
+      this._run(1);
     },
     pause: function() {
-      if (this._asyncHandle) {
-        this.cancelAsync(this._asyncHandle);
-        this._asyncHandle = undefined;
-      } else {
-        this._step();
-      }
     },
     stop: function() {
     },
 
-    _getTimeResetAction: function() {
-      return {key: '_time', value: 0, time: 0};
-    },
-    _getActiveAction: function(value) {
-      return {key: 'active', value: value, time: 0};
-    },
-    _getTimeActions: function(duration) {
-      var actions = [];
-      for (var i = 0; i <= duration; ++i) {
-        actions.push({key: 'time', value: duration - i, time: i})
-      }
-      // Delay action to show 0 for one extra second.
-      actions.push({time: duration + 1});
-      return actions;
-    },
-    _getIndexActions: function(duration) {
-      var actions = [];
-      var time = 0;
-      while (time <= duration) {
-        actions.push({key: 'index', value: Math.round(Math.random() * 6), time: time});
-        time += 1.8;
-        actions.push({key: 'index', value: -1, time: time});
-        time += 1.8;
-      }
-      return actions;
-    },
-
-    _step: function() {
-      var action = this._actions[0];
-      if (!action)
+    _run: function(repetition) {
+      if (repetition > this.repetitions) {
         return;
+      }
 
-      this._asyncHandle = this.async(function() {
-        this[action.key] = action.value;
-        this._actions.shift();
-        this._time = action.time;
-        this._step();
-      }, (action.time - this._time) * 1000);
+      var restLength = repetition == 1 ? 5 : this.restLength;
+
+      var p1 = Promise.resolve()
+          .then(setValue('active', false).bind(this))
+          .then(countDown(restLength).bind(this))
+          .then(setValue('active', true).bind(this));
+
+      var p2 = p1.then(countDown(this.intervalLength).bind(this))
+      var p3 = p1.then(randomIndex(this.intervalLength).bind(this))
+
+      Promise.all([p2, p3]).then(this._run.bind(this, repetition + 1));
     }
-  });  
+  });
+
+  function setValue(key, value) {
+    return function() {
+      this[key] = value;
+    };
+  }
+
+  function countDown(duration) {
+    return function() {
+      var p = Promise.resolve();
+      for (var i = 0; i <= duration; ++i) {
+        p = p.then(setValue('time', duration - i).bind(this))
+             .then(delay(1000));
+      }
+      return p;
+    };
+  }
+
+  function randomIndex(duration) {
+    return function() {
+      var p = Promise.resolve();
+      for (var i = 0; i < duration; ) {
+        var d = 1.4;
+        p = p.then(setValue('index', Math.floor(Math.random() * 6)).bind(this))
+             .then(delay(d * 1000))
+             .then(setValue('index', -1).bind(this))
+             .then(delay(d * 1000));
+        i += 2 * d;
+      }
+      return p;
+    }
+  }
+
+  function delay(duration) {
+    return function() {
+      return new Promise(function(resolve, reject) {
+        setTimeout(resolve, duration);
+      });
+    };
+  }
   </script>
 </dom-module>
