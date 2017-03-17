@@ -41,55 +41,51 @@
       var restLength = repetition == 1 ? 5 : this.restLength;
 
       var p1 = Promise.resolve()
-          .then(setValue('active', false).bind(this))
-          .then(countDown(restLength).bind(this))
-          .then(setValue('active', true).bind(this));
+          .then(this._setValue('active', false))
+          .then(this._countDown(restLength))
+          .then(this._setValue('active', true));
 
-      var p2 = p1.then(countDown(this.intervalLength).bind(this))
-      var p3 = p1.then(randomIndex(this.intervalLength).bind(this))
+      var p2 = p1.then(this._countDown(this.intervalLength))
+      var p3 = p1.then(this._randomIndex(this.intervalLength))
 
       Promise.all([p2, p3]).then(this._run.bind(this, repetition + 1));
+    },
+    _setValue: function(key, value) {
+      return function() {
+        this[key] = value;
+      }.bind(this);
+    },
+    _countDown: function(duration) {
+      return function() {
+        var p = Promise.resolve();
+        for (var i = 0; i <= duration; ++i) {
+          p = p.then(this._setValue('time', duration - i))
+               .then(this._delay(1000));
+        }
+        return p;
+      }.bind(this);
+    }
+    _randomIndex: function(duration) {
+      return function() {
+        var p = Promise.resolve();
+        for (var i = 0; i < duration; ) {
+          var d = 1.4;
+          p = p.then(this._setValue('index', Math.floor(Math.random() * 6)))
+               .then(this._delay(d * 1000))
+               .then(this._setValue('index', -1))
+               .then(this._delay(d * 1000));
+          i += 2 * d;
+        }
+        return p;
+      }.bind(this);
+    },
+    _delay: function(duration) {
+      return function() {
+        return new Promise(function(resolve, reject) {
+          setTimeout(resolve, duration);
+        });
+      };
     }
   });
-
-  function setValue(key, value) {
-    return function() {
-      this[key] = value;
-    };
-  }
-
-  function countDown(duration) {
-    return function() {
-      var p = Promise.resolve();
-      for (var i = 0; i <= duration; ++i) {
-        p = p.then(setValue('time', duration - i).bind(this))
-             .then(delay(1000));
-      }
-      return p;
-    };
-  }
-
-  function randomIndex(duration) {
-    return function() {
-      var p = Promise.resolve();
-      for (var i = 0; i < duration; ) {
-        var d = 1.4;
-        p = p.then(setValue('index', Math.floor(Math.random() * 6)).bind(this))
-             .then(delay(d * 1000))
-             .then(setValue('index', -1).bind(this))
-             .then(delay(d * 1000));
-        i += 2 * d;
-      }
-      return p;
-    }
-  }
-
-  function delay(duration) {
-    return function() {
-      return new Promise(function(resolve, reject) {
-        setTimeout(resolve, duration);
-      });
-    };
-  }
   </script>
 </dom-module>
