@@ -30,12 +30,12 @@
     <court-app id="courtApp"
         difficulty="[[difficulty]]" interval-length="[[intervalLength]]"
         rest-length="[[restLength]]" repetitions="[[repetitions]]"
-        time="{{time}}" index="{{index}}" active="{{active}}">
+        time="{{time}}" index="{{index}}" state="{{state}}" active="{{active}}">
     </court-app>
     <div id="display">
       <div id="time" class$="[[_formatClass(active)]]">[[_formatTime(time)]]</div>
       <div>
-        <paper-icon-button icon="av:pause" mini on-tap="pause"></paper-icon-button>
+        <paper-icon-button icon="[[_formatIcon(state)]]" mini on-tap="pause"></paper-icon-button>
         <paper-icon-button icon="av:stop" mini on-tap="stop"></paper-icon-button>
       </div>
     </div>
@@ -63,6 +63,9 @@
       var minutes = "0" + Math.round(time / 60);
       var seconds = "0" + (time % 60);
       return minutes.slice(-2) + ':' + seconds.slice(-2);
+    },
+    _formatIcon: function(state) {
+      return state == 'paused' ? 'av:play-arrow' : 'av:pause';
     }
   });
   </script>

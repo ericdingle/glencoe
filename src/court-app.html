@@ -1,6 +1,12 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 <dom-module is="court-app">
   <script>
+  var states = {
+    PLAYING: 'playing',
+    PAUSED: 'paused',
+    STOPPED: 'stopped'
+  };
+
   Polymer({
     is: 'court-app',
     properties: {
@@ -18,6 +24,11 @@
         value: -1,
         notify: true
       },
+      state: {
+        type: String,
+        value: states.STOPPED,
+        notify: true,
+      },
       active: {
         type: Boolean,
         value: false,
@@ -26,17 +37,24 @@
     },
 
     play: function() {
+      this.state = states.PLAYING;
       this._run(1);
     },
     pause: function() {
+      if (this.state == states.PLAYING)
+        this.state = states.PAUSED;
+      else if (this.state == states.PAUSED)
+        this.state = states.PLAYING;
+      else
+        console.error('Invalid state: ' + this.state);
     },
     stop: function() {
+      this.state = states.STOPPED;
     },
 
     _run: function(repetition) {
-      if (repetition > this.repetitions) {
+      if (repetition > this.repetitions)
         return;
-      }
 
       var restLength = repetition == 1 ? 5 : this.restLength;
 
@@ -50,11 +68,11 @@
 
       Promise.all([p2, p3]).then(this._run.bind(this, repetition + 1));
     },
+
     _setValue: function(key, value) {
-      return function() {
-        this[key] = value;
-      }.bind(this);
+      return function() { this[key] = value; }.bind(this);
     },
+
     _countDown: function(duration) {
       return function() {
         var p = Promise.resolve();
@@ -64,7 +82,8 @@
         }
         return p;
       }.bind(this);
-    }
+    },
+
     _randomIndex: function(duration) {
       return function() {
         var p = Promise.resolve();
@@ -79,12 +98,27 @@
         return p;
       }.bind(this);
     },
+
     _delay: function(duration) {
       return function() {
         return new Promise(function(resolve, reject) {
           setTimeout(resolve, duration);
+        }).then(this._checkState.bind(this));
+      }.bind(this);
+    },
+
+    _checkState: function() {
+      if (this.state == states.PLAYING)
+        return Promise.resolve();
+      if (this.state == states.STOPPED)
+        return Promise.reject();
+
+      return new Promise(function(resolve, reject) {
+        this.addEventListener('state-changed', function(e) {
+          if (e.detail.value == states.PLAYING)
+            resolve();
         });
-      };
+      }.bind(this));
     }
   });
   </script>
