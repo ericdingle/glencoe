@@ -37,16 +37,12 @@
     },
 
     play: function() {
+      if (this.state == states.STOPPED)
+        this._run(1);
       this.state = states.PLAYING;
-      this._run(1);
     },
     pause: function() {
-      if (this.state == states.PLAYING)
-        this.state = states.PAUSED;
-      else if (this.state == states.PAUSED)
-        this.state = states.PLAYING;
-      else
-        console.error('Invalid state: ' + this.state);
+      this.state = states.PAUSED;
     },
     stop: function() {
       this.state = states.STOPPED;
@@ -66,7 +62,9 @@
       var p2 = p1.then(this._countDown(this.intervalLength))
       var p3 = p1.then(this._randomIndex(this.intervalLength))
 
-      Promise.all([p2, p3]).then(this._run.bind(this, repetition + 1));
+      Promise.all([p2, p3])
+          .then(this._run.bind(this, repetition + 1))
+          .catch(function() {});
     },
 
     _setValue: function(key, value) {
@@ -103,22 +101,26 @@
       return function() {
         return new Promise(function(resolve, reject) {
           setTimeout(resolve, duration);
-        }).then(this._checkState.bind(this));
+        }).then(this._checkState());
       }.bind(this);
     },
 
     _checkState: function() {
-      if (this.state == states.PLAYING)
-        return Promise.resolve();
-      if (this.state == states.STOPPED)
-        return Promise.reject();
+      return function() {
+        if (this.state == states.PLAYING)
+          return Promise.resolve();
+        if (this.state == states.STOPPED)
+          return Promise.reject();
 
-      return new Promise(function(resolve, reject) {
-        this.addEventListener('state-changed', function(e) {
-          if (e.detail.value == states.PLAYING)
-            resolve();
-        });
-      }.bind(this));
+        return new Promise(function(resolve, reject) {
+          this.addEventListener('state-changed', function(e) {
+            if (e.detail.value == states.PLAYING)
+              setTimeout(resolve, 500);
+            else if (e.detail.value == states.STOPPED)
+              reject();
+          });
+        }.bind(this));
+      }.bind(this);
     }
   });
   </script>
