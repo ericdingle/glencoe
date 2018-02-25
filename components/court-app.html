@@ -48,76 +48,66 @@
       this.state = states.STOPPED;
     }
 
-    _run(repetition) {
+    async _run(repetition) {
       if (repetition > this.repetitions)
         return;
 
-      var restLength = repetition == 1 ? 5 : this.restLength;
+      const restLength = repetition == 1 ? 5 : this.restLength;
 
-      var p1 = Promise.resolve()
-          .then(this._setValue('active', false))
-          .then(this._countDown(restLength))
-          .then(this._setValue('active', true));
+      this.active = false;
+      try {
+        await this._countDown(restLength);
+      } catch(e) { return; }
 
-      var p2 = p1.then(this._countDown(this.intervalLength))
-      var p3 = p1.then(this._randomIndex(this.intervalLength))
+      this.active = true;
+      const countDown = this._countDown(this.intervalLength);
+      const randomIndex = this._randomIndex(this.intervalLength);
 
-      Promise.all([p2, p3])
-          .then(this._run.bind(this, repetition + 1))
-          .catch(function() {});
+      try {
+        await Promise.all([countDown, randomIndex]);
+      } catch(e) { return; }
+
+      this._run(repetition + 1);
     }
 
-    _setValue(key, value) {
-      return () => { this[key] = value; };
+    async _countDown(duration) {
+      for (var i = 0; i <= duration; ++i) {
+        this.time = duration - i;
+        await this._delay(1000);
+      }
     }
 
-    _countDown(duration) {
-      return () => {
-        var p = Promise.resolve();
-        for (var i = 0; i <= duration; ++i) {
-          p = p.then(this._setValue('time', duration - i))
-               .then(this._delay(1000));
-        }
-        return p;
-      };
+    async _randomIndex(duration) {
+      const d = 1.4;
+      for (var i = 0; i < duration; i += 2 * d) {
+        this.index = Math.floor(Math.random() * 6);
+        await this._delay(d * 1000);
+        this.index = -1;
+        await this._delay(d * 1000);
+      }
     }
 
-    _randomIndex(duration) {
-      return () => {
-        var d = 1.4;
-        var p = Promise.resolve();
-        for (var i = 0; i < duration; i += 2 * d) {
-          p = p.then(this._setValue('index', Math.floor(Math.random() * 6)))
-               .then(this._delay(d * 1000))
-               .then(this._setValue('index', -1))
-               .then(this._delay(d * 1000));
-        }
-        return p;
-      };
-    }
-
-    _delay(duration) {
-      return () => new Promise((resolve, reject) => {
+    async _delay(duration) {
+      await new Promise((resolve, reject) => {
         setTimeout(resolve, duration);
-      }).then(this._checkState());
+      });
+      await this._checkState();
     }
 
     _checkState() {
-      return () => {
-        if (this.state == states.PLAYING)
-          return Promise.resolve();
-        if (this.state == states.STOPPED)
-          return Promise.reject();
+      if (this.state == states.PLAYING)
+        return Promise.resolve();
+      if (this.state == states.STOPPED)
+        return Promise.reject();
 
-        return new Promise((resolve, reject) => {
-          this.addEventListener('state-changed', (e) => {
-            if (e.detail.value == states.PLAYING)
-              setTimeout(resolve, 500);
-            else if (e.detail.value == states.STOPPED)
-              reject();
-          });
+      return new Promise((resolve, reject) => {
+        this.addEventListener('state-changed', (e) => {
+          if (e.detail.value == states.PLAYING)
+            setTimeout(resolve, 500);
+          else if (e.detail.value == states.STOPPED)
+            reject();
         });
-      };
+      });
     }
   }
   customElements.define(CourtApp.is, CourtApp);
