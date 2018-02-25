@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <dom-module is="court-app">
   <script>
   var states = {
@@ -7,9 +7,9 @@
     STOPPED: 'stopped'
   };
 
-  Polymer({
-    is: 'court-app',
-    properties: {
+  class CourtApp extends Polymer.Element {
+    static get is() { return 'court-app'; }
+    static get properties() { return {
       difficulty: Number,
       intervalLength: Number,
       restLength: Number,
@@ -34,21 +34,21 @@
         value: false,
         notify: true,
       }
-    },
+    }}
 
-    play: function() {
+    play() {
       if (this.state == states.STOPPED)
         this._run(1);
       this.state = states.PLAYING;
-    },
-    pause: function() {
+    }
+    pause() {
       this.state = states.PAUSED;
-    },
-    stop: function() {
+    }
+    stop() {
       this.state = states.STOPPED;
-    },
+    }
 
-    _run: function(repetition) {
+    _run(repetition) {
       if (repetition > this.repetitions)
         return;
 
@@ -65,13 +65,13 @@
       Promise.all([p2, p3])
           .then(this._run.bind(this, repetition + 1))
           .catch(function() {});
-    },
+    }
 
-    _setValue: function(key, value) {
+    _setValue(key, value) {
       return function() { this[key] = value; }.bind(this);
-    },
+    }
 
-    _countDown: function(duration) {
+    _countDown(duration) {
       return function() {
         var p = Promise.resolve();
         for (var i = 0; i <= duration; ++i) {
@@ -80,9 +80,9 @@
         }
         return p;
       }.bind(this);
-    },
+    }
 
-    _randomIndex: function(duration) {
+    _randomIndex(duration) {
       return function() {
         var p = Promise.resolve();
         for (var i = 0; i < duration; ) {
@@ -95,17 +95,17 @@
         }
         return p;
       }.bind(this);
-    },
+    }
 
-    _delay: function(duration) {
+    _delay(duration) {
       return function() {
         return new Promise(function(resolve, reject) {
           setTimeout(resolve, duration);
         }).then(this._checkState());
       }.bind(this);
-    },
+    }
 
-    _checkState: function() {
+    _checkState() {
       return function() {
         if (this.state == states.PLAYING)
           return Promise.resolve();
@@ -122,6 +122,7 @@
         }.bind(this));
       }.bind(this);
     }
-  });
+  }
+  customElements.define(CourtApp.is, CourtApp);
   </script>
 </dom-module>

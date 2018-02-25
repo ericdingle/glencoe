@@ -1,4 +1,4 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <dom-module id="court-ui">
   <template>
     <style>
@@ -55,22 +55,24 @@
     </svg>
   </template>
   <script>
-    Polymer({
-      is: 'court-ui',
-      properties: {
-        index: {
-          type: Number,
-          observer: '_handleIndexChange'
-        }
-      },
-      _handleIndexChange: function(newValue, oldValue) {
-        this._setVisibility(newValue, 'visible');
-        this._setVisibility(oldValue, 'hidden');
-      },
-      _setVisibility: function(i, value) {
-        if (i != undefined && i != -1)
-          this.$$('#arrow' + i).style.visibility = value;
+  class CourtUi extends Polymer.Element {
+    static get is() { return 'court-ui'; }
+    static get properties() { return {
+      index: {
+        type: Number,
+        observer: '_handleIndexChanged'
       }
-    });  
+    }}
+    _handleIndexChanged(newValue, oldValue) {
+      this._setVisibility(newValue, 'visible');
+      this._setVisibility(oldValue, 'hidden');
+    }
+    _setVisibility(i, value) {
+      if (i != undefined && i != -1) {
+        this.shadowRoot.querySelector('#arrow' + i).style.visibility = value;
+      }
+    }
+  }
+  customElements.define(CourtUi.is, CourtUi);
   </script>
 </dom-module>

@@ -1,5 +1,5 @@
 <link rel="import" href="../bower_components/iron-pages/iron-pages.html">
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="court-page.html">
 <link rel="import" href="settings-page.html">
 <dom-module id="glencoe-app">
@@ -16,21 +16,22 @@
     </iron-pages>
   </template>
   <script>
-  Polymer({
-    is: 'glencoe-app',
-    properties: {
+  class GlencoeApp extends Polymer.Element {
+    static get is() { return 'glencoe-app'; }
+    static get properties() { return {
       selected: {
         type: String,
         value: 'settings'
-      },
-    },
-    handlePlay: function() {
+      }
+    }}
+    handlePlay() {
       this.selected = 'court';
       this.$.court.play();
-    },
-    handleStop: function() {
+    }
+    handleStop() {
       this.selected = 'settings';
     }
-  });
+  }
+  customElements.define(GlencoeApp.is, GlencoeApp);
   </script>
 </dom-module>

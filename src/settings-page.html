@@ -2,7 +2,7 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../bower_components/paper-slider/paper-slider.html">
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <dom-module id="settings-page">
   <template>
     <style>
@@ -33,9 +33,9 @@
     </paper-material>
   </template>
   <script>
-  Polymer({
-    is: 'settings-page',
-    properties: {
+  class SettingsPage extends Polymer.Element {
+    static get is() { return 'settings-page'; }
+    static get properties() { return {
       difficulty: {
         type: Number,
         notify: true
@@ -52,10 +52,11 @@
         type: Number,
         notify: true
       }
-    },
-    handlePlay: function() {
-      this.fire('play');
+    }}
+    handlePlay() {
+      this.dispatchEvent(new CustomEvent('play'));
     }
-  });
+  }
+  customElements.define(SettingsPage.is, SettingsPage);
   </script>
 </dom-module>

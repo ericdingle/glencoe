@@ -1,6 +1,6 @@
 <link rel="import" href="../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="court-app.html">
 <link rel="import" href="court-ui.html">
 <dom-module id="court-page">
@@ -47,31 +47,32 @@
     <court-ui index="[[index]]"></court-ui>
   </template>
   <script>
-  Polymer({
-    is: 'court-page',
+  class CourtPage extends Polymer.Element {
+    static get is() { return 'court-page'; }
 
-    play: function() {
+    play() {
       this.$.courtApp.play();
-    },
-    pause: function() {
+    }
+    pause() {
       this.$.courtApp.pause();
-    },
-    stop: function() {
+    }
+    stop() {
       this.$.courtApp.stop();
-      this.fire('stop');
-    },
+      this.dispatchEvent(new CustomEvent('stop'));
+    }
 
-    _formatClass: function(active) {
+    _formatClass(active) {
       return active ? 'green' : 'red';
-    },
-    _formatTime: function(time) {
+    }
+    _formatTime(time) {
       var minutes = "0" + Math.round(time / 60);
       var seconds = "0" + (time % 60);
       return minutes.slice(-2) + ':' + seconds.slice(-2);
-    },
-    _isEqual: function(a, b) {
+    }
+    _isEqual(a, b) {
       return a == b;
     }
-  });
+  }
+  customElements.define(CourtPage.is, CourtPage);
   </script>
 </dom-module>
