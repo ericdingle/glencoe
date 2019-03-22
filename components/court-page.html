@@ -65,7 +65,7 @@
       return active ? 'green' : 'red';
     }
     _formatTime(time) {
-      var minutes = "0" + Math.round(time / 60);
+      var minutes = "0" + Math.floor(time / 60);
       var seconds = "0" + (time % 60);
       return minutes.slice(-2) + ':' + seconds.slice(-2);
     }
