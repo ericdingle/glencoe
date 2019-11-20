@@ -1,7 +1,7 @@
 import {customElement} from '@polymer/decorators';
 import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/iron-icons/av-icons';
-import '@polymer/paper-icon-button';
+import '@polymer/iron-icons/av-icons.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
 import './court-app.js';
 import './court-ui.js';
 

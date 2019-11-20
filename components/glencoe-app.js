@@ -1,6 +1,6 @@
 import {customElement} from '@polymer/decorators';
 import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/iron-pages';
+import '@polymer/iron-pages/iron-pages.js';
 import './court-page.js';
 import './settings-page.js';
 

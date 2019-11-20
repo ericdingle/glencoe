@@ -1,9 +1,9 @@
 import {customElement} from '@polymer/decorators';
 import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/iron-icons/av-icons';
-import '@polymer/paper-icon-button';
-import '@polymer/paper-material';
-import '@polymer/paper-slider';
+import '@polymer/iron-icons/av-icons.js';
+import '@polymer/paper-icon-button/paper-icon-button.js';
+import '@polymer/paper-material/paper-material.js';
+import '@polymer/paper-slider/paper-slider.js';
 
 @customElement('settings-page')
 class SettingsPage extends PolymerElement {
