@@ -8,7 +8,7 @@ A web app that provides a UI for squash court ghosting exercises.
 
 ## Debug
 
-    $ npm run debug
+    $ npm run dev
 
 ## Prod
 
