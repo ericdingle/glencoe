@@ -1,47 +1,60 @@
-import {customElement} from '@polymer/decorators';
-import {PolymerElement, html} from '@polymer/polymer';
-
 var states = {
   PLAYING: 'playing',
   PAUSED: 'paused',
   STOPPED: 'stopped'
 };
 
-@customElement('court-app')
-class CourtApp extends PolymerElement {
-  static get properties() { return {
-    time:   {type: Number,  value: 0,              notify: true},
-    index:  {type: Number,  value: -1,             notify: true},
-    state:  {type: String,  value: states.STOPPED, notify: true},
-    active: {type: Boolean, value: false,          notify: true}
-  }}
+function Deferred() {
+  const p = this.promise = new Promise((resolve, reject) => {
+    this.resolve = resolve;
+  });
+  return this;
+}
+
+export class CourtApp {
+  constructor(settings, callback) {
+    this.settings = settings;
+    this.callback = callback;
+
+    this.setState(states.STOPPED);
+  }
+
+  setState(state) {
+    this.state = state;
+    this.callback('state', state);
+
+    if (this.deferred) {
+      this.deferred.resolve();
+      delete this.deferred;
+    }
+  }
 
   play() {
     if (this.state == states.STOPPED)
       this._run(1);
-    this.state = states.PLAYING;
+    this.setState(states.PLAYING);
   }
   pause() {
-    this.state = states.PAUSED;
+    this.setState(states.PAUSED);
   }
   stop() {
-    this.state = states.STOPPED;
+    this.setState(states.STOPPED);
   }
 
   async _run(repetition) {
-    if (repetition > this.repetitions)
+    if (repetition > this.settings.repetitions)
       return;
 
-    const restLength = repetition == 1 ? 5 : this.restLength;
+    const restLength = repetition == 1 ? 5 : this.settings.restLength;
 
-    this.active = false;
+    this.callback('active', false);
     try {
       await this._countDown(restLength);
     } catch(e) { return; }
 
-    this.active = true;
-    const countDown = this._countDown(this.intervalLength);
-    const randomIndex = this._randomIndex(this.intervalLength);
+    this.callback('active', true);
+    const countDown = this._countDown(this.settings.intervalLength);
+    const randomIndex = this._randomIndex(this.settings.intervalLength);
 
     try {
       await Promise.all([countDown, randomIndex]);
@@ -52,7 +65,7 @@ class CourtApp extends PolymerElement {
 
   async _countDown(duration) {
     for (var i = 0; i <= duration; ++i) {
-      this.time = duration - i;
+      this.callback('time', duration - i);
       await this._delay(1000);
     }
   }
@@ -60,9 +73,9 @@ class CourtApp extends PolymerElement {
   async _randomIndex(duration) {
     const d = 1.4;
     for (var i = 0; i < duration; i += 2 * d) {
-      this.index = Math.floor(Math.random() * 6);
+      this.callback('index', Math.floor(Math.random() * 6));
       await this._delay(d * 1000);
-      this.index = -1;
+      this.callback('index', -1);
       await this._delay(d * 1000);
     }
   }
@@ -70,18 +83,12 @@ class CourtApp extends PolymerElement {
   async _delay(duration) {
     await new Promise(resolve => setTimeout(resolve, duration));
 
-    if (this.state == states.PLAYING)
-      return;
+    while (this.state == states.PAUSED) {
+      if (!this.deferred) this.deferred = new Deferred();
+      await this.deferred.promise;
+    }
+
     if (this.state == states.STOPPED)
       throw undefined;
-
-    await new Promise((resolve, reject) => {
-      this.addEventListener('state-changed', (e) => {
-        if (e.detail.value == states.PLAYING)
-          setTimeout(resolve, 500);
-        else if (e.detail.value == states.STOPPED)
-          reject();
-      });
-    });
   }
 }

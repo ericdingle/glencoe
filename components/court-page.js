@@ -1,77 +1,77 @@
-import {customElement} from '@polymer/decorators';
-import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/iron-icons/av-icons.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import './court-app.js';
+import {LitElement, css, customElement, html} from 'lit-element';
+import '@material/mwc-icon-button/mwc-icon-button.js';
+import {CourtApp} from './court-app.js';
 import './court-ui.js';
 
 @customElement('court-page')
-class CourtPage extends PolymerElement {
-  static get template() {
+class CourtPage extends LitElement {
+  static get properties() { return {
+    active: {type: Boolean},
+    index: {type: Number},
+    state: {type: String},
+    time: {type: Number}
+  }}
+
+  static get styles() {
+    return [css`
+      :host > div {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      #time {
+        font-size: 30px;
+        margin: auto;
+      }
+      .green {color: green;}
+      .red {color: red;}
+      mwc-icon-button {
+        background-color: #000;
+        border-radius: 50%;
+        color: #FFF;
+        margin: 1px;
+        --mdc-icon-button-size: 40px;
+      }
+    `];
+  }
+
+  render() {
     return html`
-      <style>
-        #display {
-          display: flex;
-          flex-direction: column;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-        #time {
-          font-size: 30px;
-          margin: auto;
-        }
-        .green {color: green;}
-        .red {color: red;}
-        paper-icon-button {
-          background-color: #000;
-          border-radius: 50%;
-          color: #FFF;
-          margin: 1px;
-        }
-      </style>
-      <court-app id="courtApp"
-          difficulty="[[difficulty]]" interval-length="[[intervalLength]]"
-          rest-length="[[restLength]]" repetitions="[[repetitions]]"
-          time="{{time}}" index="{{index}}" state="{{state}}" active="{{active}}">
-      </court-app>
-      <div id="display">
-        <div id="time" class$="[[_formatClass(active)]]">[[_formatTime(time)]]</div>
+      <div>
+        <div id="time" class="${this.active ? 'green' : 'red'}">${this.formatTime(this.time)}</div>
         <div>
-          <template is="dom-if" if="[[_isEqual(state, 'paused')]]">
-            <paper-icon-button icon="av:play-arrow" mini on-tap="play"></paper-icon-button>
-          </template>
-          <template is="dom-if" if="[[_isEqual(state, 'playing')]]">
-            <paper-icon-button icon="av:pause" mini on-tap="pause"></paper-icon-button>
-          </template>
-          <paper-icon-button icon="av:stop" mini on-tap="stop"></paper-icon-button>
+          <mwc-icon-button icon="${this.state == 'playing' ? 'pause' : 'play_arrow'}"
+                           @click="${this.state == 'playing' ? this.pause : this.play}">
+          </mwc-icon-button>
+          <mwc-icon-button icon="stop" @click="${this.stop}"></mwc-icon-button>
         </div>
       </div>
-      <court-ui index="[[index]]"></court-ui>
+      <court-ui index="${this.index}"></court-ui>
     `;
   }
 
+
+  init(settings) {
+    this.courtApp = new CourtApp(settings, (key, value) => { this[key] = value; });
+  }
   play() {
-    this.$.courtApp.play();
+    this.courtApp.play();
   }
   pause() {
-    this.$.courtApp.pause();
+    this.courtApp.pause();
   }
   stop() {
-    this.$.courtApp.stop();
+    this.courtApp.stop();
+    delete this.courtApp;
     this.dispatchEvent(new CustomEvent('stop'));
   }
 
-  _formatClass(active) {
-    return active ? 'green' : 'red';
-  }
-  _formatTime(time) {
+  formatTime(time) {
     var minutes = "0" + Math.floor(time / 60);
     var seconds = "0" + (time % 60);
     return minutes.slice(-2) + ':' + seconds.slice(-2);
-  }
-  _isEqual(a, b) {
-    return a == b;
   }
 }

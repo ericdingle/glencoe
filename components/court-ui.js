@@ -1,44 +1,38 @@
-import {customElement} from '@polymer/decorators';
-import {PolymerElement, html} from '@polymer/polymer';
+import {LitElement, css, customElement, html} from 'lit-element';
 
 @customElement('court-ui')
-class CourtUi extends PolymerElement {
+class CourtUi extends LitElement {
   static get properties() { return {
-    index: {type: Number, observer: '_handleIndexChanged'}
+    index: {type: Number}
   }}
 
-  _handleIndexChanged(newValue, oldValue) {
-    this._setVisibility(newValue, 'visible');
-    this._setVisibility(oldValue, 'hidden');
+  static get styles() {
+    return [css`
+      svg {
+        display: block;
+        object-fit: contain;
+        height: 100vh;
+        width: 100vw;
+      }
+      .line {
+        stroke: red;
+        stroke-width: 5;
+      }
+      .arrow {
+        fill: transparent;
+        marker-end: url(#triangle);
+        stroke: black;
+        stroke-width: 10;
+        visibility: hidden;
+      }
+      .visible {
+        visibility: visible !important;
+      }
+    `];
   }
 
-  _setVisibility(i, value) {
-    if (i != undefined && i != -1) {
-      this.shadowRoot.querySelector('#arrow' + i).style.visibility = value;
-    }
-  }
-
-  static get template() {
+  render() {
     return html`
-      <style>
-        svg {
-          display: block;
-          object-fit: contain;
-          height: 100vh;
-          width: 100vw;
-        }
-        .line {
-          stroke: red;
-          stroke-width: 5;
-        }
-        .arrow {
-          fill: transparent;
-          marker-end: url(#triangle);
-          stroke: black;
-          stroke-width: 10;
-          visibility: hidden;
-        }
-      </style>
       <svg viewbox="0 0 640 975">
         <defs>
           <linearGradient id="woodGradient" x1="0" y1="0" x2="0" y2="1">
@@ -65,12 +59,12 @@ class CourtUi extends PolymerElement {
         <line x1="480" y1="545" x2="480" y2="705" class="line"/>
         <line x1="320" y1="545" x2="320" y2="975" class="line"/>
 
-        <path id="arrow0" d="M300 400 Q 250 175 125 125" class="arrow"/>
-        <path id="arrow1" d="M340 400 Q 390 175 515 125" class="arrow"/>
-        <line id="arrow2" x1="300" y1="575" x2="100" y2="575" class="arrow"/>
-        <line id="arrow3" x1="340" y1="575" x2="540" y2="575" class="arrow"/>
-        <path id="arrow4" d="M300 600 Q 250 800 125 850" class="arrow"/>
-        <path id="arrow5" d="M340 600 Q 390 800 515 850" class="arrow"/>
+        <path d="M300 400 Q 250 175 125 125" class="arrow ${this.index == 0 ? 'visible' : ''}"/>
+        <path d="M340 400 Q 390 175 515 125" class="arrow ${this.index == 1 ? 'visible' : ''}"/>
+        <line x1="300" y1="575" x2="100" y2="575" class="arrow ${this.index == 2 ? 'visible' : ''}"/>
+        <line x1="340" y1="575" x2="540" y2="575" class="arrow ${this.index == 3 ? 'visible' : ''}"/>
+        <path d="M300 600 Q 250 800 125 850" class="arrow ${this.index == 4 ? 'visible' : ''}"/>
+        <path d="M340 600 Q 390 800 515 850" class="arrow ${this.index == 5 ? 'visible' : ''}"/>
       </svg>
     `;
   }

@@ -1,52 +1,69 @@
-import {customElement} from '@polymer/decorators';
-import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/iron-icons/av-icons.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-material/paper-material.js';
-import '@polymer/paper-slider/paper-slider.js';
+import {LitElement, css, customElement, html} from 'lit-element';
+import '@material/mwc-icon-button';
+import '@material/mwc-slider';
 
 @customElement('settings-page')
-class SettingsPage extends PolymerElement {
+class SettingsPage extends LitElement {
   static get properties() { return {
-    difficulty:     {type: Number, notify: true},
-    intervalLength: {type: Number, notify: true},
-    restLength:     {type: Number, notify: true},
-    repetitions:    {type: Number, notify: true}
+    difficulty:     {type: Number},
+    intervalLength: {type: Number},
+    restLength:     {type: Number},
+    repetitions:    {type: Number}
   }}
 
-  static get template() {
-    return html`
-      <style>
-        paper-material {
-          margin: 5px auto;
-          max-width: 500px;
-          padding: 10px;
-        }
-        paper-slider {
-          width: 100%;
-        }
-        paper-icon-button {
-          background-color: #000;
-          border-radius: 50%;
-          color: #FFF;
-        }
-      </style>
+  constructor() {
+    super();
+    this.difficulty = this.repetitions = 1;
+    this.intervalLength = this.restLength = 10;
+  }
 
-      <paper-material>
-        <div>Difficulty</div>
-        <paper-slider min="1" max="20" value="{{difficulty}}" editable></paper-slider>
-        <div>Interval Length (seconds)</div>
-        <paper-slider min="10" max="180" step="10" value="{{intervalLength}}" editable></paper-slider>
-        <div>Rest Length (seconds)</div>
-        <paper-slider min="10" max="180" step="10" value="{{restLength}}" editable></paper-slider>
-        <div>Repetitions</div>
-        <paper-slider min="1" max="20" value="{{repetitions}}" editable></paper-slider>
-        <paper-icon-button icon="av:play-arrow" on-click="handlePlay"></paper-icon-button>
-      </paper-material>
+  static get styles() {
+    return [ css`
+      :host > div {
+        box-shadow: 1px 1px 2px 2px #CCC;
+        margin: 5px auto;
+        max-width: 500px;
+        padding: 10px;
+      }
+      mwc-slider {
+        width: 100%;
+      }
+      mwc-icon-button {
+        background-color: #000;
+        border-radius: 50%;
+        color: #FFF;
+        --mdc-icon-button-size: 40px;
+      }
+    `]
+  }
+
+  render() {
+    return html`
+      <div>
+        <div>Difficulty = ${this.difficulty}</div>
+        <mwc-slider min="1" max="20" step="1" markers @input="${e => this.handleInput(e, 'difficulty')}"></mwc-slider>
+        <div>Interval Length = ${this.intervalLength}s</div>
+        <mwc-slider min="10" max="180" step="10" markers @input="${e => this.handleInput(e, 'intervalLength')}"></mwc-slider>
+        <div>Rest Length = ${this.restLength}s</div>
+        <mwc-slider min="10" max="180" step="10" markers @input="${e => this.handleInput(e, 'restLength')}"></mwc-slider>
+        <div>Repetitions = ${this.repetitions}</div>
+        <mwc-slider min="1" max="20" step="1" markers @input="${e => this.handleInput(e, 'repetitions')}"></mwc-slider>
+        <mwc-icon-button icon="play_arrow" @click="${this.handlePlay}"></mwc-icon-button>
+      </div>
     `;
   }
 
+  handleInput(event, property) {
+    this[property] = event.target.value;
+  }
+
   handlePlay() {
-    this.dispatchEvent(new CustomEvent('play'));
+    const detail = {
+      difficulty: this.difficulty,
+      intervalLength: this.intervalLength,
+      restLength: this.restLength,
+      repetitions: this.repetitions
+    }
+    this.dispatchEvent(new CustomEvent('play', {detail: detail}));
   }
 }

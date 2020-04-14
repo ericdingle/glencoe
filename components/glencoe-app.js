@@ -1,33 +1,35 @@
-import {customElement} from '@polymer/decorators';
-import {PolymerElement, html} from '@polymer/polymer';
-import '@polymer/iron-pages/iron-pages.js';
+import {LitElement, customElement, html} from 'lit-element';
 import './court-page.js';
 import './settings-page.js';
 
 @customElement('glencoe-app')
-class GlencoeApp extends PolymerElement {
+class GlencoeApp extends LitElement {
   static get properties() { return {
-    page: {type: String, value: 'settings' }
+    page: {type: String},
+    settings: {type: Object}
   }}
 
-  static get template() {
-    return html`
-      <iron-pages selected="[[page]]" attr-for-selected="id">
-        <settings-page id="settings" on-play="handlePlay"
-            difficulty="{{difficulty}}" interval-length="{{intervalLength}}"
-            rest-length="{{restLength}}" repetitions="{{repetitions}}">
-        </settings-page>
-        <court-page id="court" on-stop="handleStop"
-            difficulty="[[difficulty]]" interval-length="[[intervalLength]]"
-            rest-length="[[restLength]]" repetitions="[[repetitions]]">
-        </court-page>
-      </iron-pages>
-    `;
+  constructor() {
+    super();
+    this.page = 'settings';
+    this.settings = {};
   }
 
-  handlePlay() {
+  render() {
+    if (this.page == 'settings') {
+      return html`<settings-page @play="${this.handlePlay}"></settings-page> `;
+    } else {
+      return html`<court-page @stop="${this.handleStop}"></court-page> `;
+    }
+  }
+
+  async handlePlay(event) {
     this.page = 'court';
-    this.$.court.play();
+    await this.updateComplete;
+
+    const courtPage = this.shadowRoot.querySelector('court-page');
+    courtPage.init(event.detail);
+    courtPage.play();
   }
   handleStop() {
     this.page = 'settings';
