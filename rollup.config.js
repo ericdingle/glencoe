@@ -15,6 +15,6 @@ export default {
     }),
     resolve(),
     process.env.PROD && terser(),
-    !process.env.PROD && serve({contentBase:'', port: 8080})
+    !process.env.PROD && serve({contentBase:'', port: 8000})
   ]
 }

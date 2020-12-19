@@ -18,7 +18,7 @@ class SettingsPage extends LitElement {
   }
 
   static get styles() {
-    return [ css`
+    return [css`
       :host > div {
         box-shadow: 1px 1px 2px 2px #CCC;
         margin: 5px auto;
