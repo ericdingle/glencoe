@@ -1,4 +1,5 @@
-import {LitElement, css, customElement, html} from 'lit-element';
+import {LitElement, css, html} from 'lit';
+import {customElement} from 'lit/decorators.js';
 import '@material/mwc-icon-button';
 import '@material/mwc-slider';
 
@@ -41,13 +42,25 @@ class SettingsPage extends LitElement {
     return html`
       <div>
         <div>Difficulty = ${this.difficulty}</div>
-        <mwc-slider min="1" max="20" step="1" markers @input="${e => this.handleInput(e, 'difficulty')}"></mwc-slider>
+        <mwc-slider discrete withTickMarks
+          value="1" min="1" max="20" step="1"
+          @input="${e => this.handleInput(e, 'difficulty')}">
+        </mwc-slider>
         <div>Interval Length = ${this.intervalLength}s</div>
-        <mwc-slider min="10" max="180" step="10" markers @input="${e => this.handleInput(e, 'intervalLength')}"></mwc-slider>
+        <mwc-slider discrete withTickMarks
+          value="10" min="10" max="180" step="10"
+          @input="${e => this.handleInput(e, 'intervalLength')}">
+        </mwc-slider>
         <div>Rest Length = ${this.restLength}s</div>
-        <mwc-slider min="10" max="180" step="10" markers @input="${e => this.handleInput(e, 'restLength')}"></mwc-slider>
+        <mwc-slider discrete withTickMarks
+          value="10" min="10" max="180" step="10"
+          @input="${e => this.handleInput(e, 'restLength')}">
+        </mwc-slider>
         <div>Repetitions = ${this.repetitions}</div>
-        <mwc-slider min="1" max="20" step="1" markers @input="${e => this.handleInput(e, 'repetitions')}"></mwc-slider>
+        <mwc-slider discrete withTickMarks
+          value="1" min="1" max="20" step="1"
+          @input="${e => this.handleInput(e, 'repetitions')}">
+        </mwc-slider>
         <mwc-icon-button icon="play_arrow" @click="${this.handlePlay}"></mwc-icon-button>
       </div>
     `;

@@ -1,4 +1,5 @@
-import {LitElement, css, customElement, html} from 'lit-element';
+import {LitElement, css, html} from 'lit';
+import {customElement} from 'lit/decorators.js';
 import '@material/mwc-icon-button/mwc-icon-button.js';
 import {CourtApp} from './court-app.js';
 import './court-ui.js';
@@ -11,6 +12,11 @@ class CourtPage extends LitElement {
     state: {type: String},
     time: {type: Number}
   }}
+
+  constructor() {
+    super();
+    this.index = -1;
+  }
 
   static get styles() {
     return [css`

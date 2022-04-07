@@ -1,4 +1,5 @@
-import {LitElement, css, customElement, html} from 'lit-element';
+import {LitElement, css, html} from 'lit';
+import {customElement} from 'lit/decorators.js';
 
 @customElement('court-ui')
 class CourtUi extends LitElement {
